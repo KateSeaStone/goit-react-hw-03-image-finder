@@ -22,32 +22,24 @@ class App extends Component {
   componentDidUpdate(prevProps, prevState) {
     // console.log(this.state.currentPage);
     // console.log('updated', this.state);
-
-    console.log('isLoading', this.state.isLoading);
+    //console.log('isLoading', this.state.isLoading);
 
     if (this.state.query === '') {
       return
     }
 
     if ((prevState.query !== this.state.query) || (prevState.currentPage !== this.state.currentPage)) {
-
       // console.log('changed');
-
       fetchImages(this.state.query, this.state.currentPage)
-        .then(data => 
-          {
-          console.log(data);
-          this.setState({ 
-          images: this.state.images.concat(data.hits),
-          isLoading: false}
-         )
-        }
-        
-         );
-        
-        
-         
-        }
+        .then(data => {
+          // console.log(data);
+          this.setState({
+            images: this.state.images.concat(data.hits),
+            isLoading: false
+          })
+        })
+        .catch(error => this.setState({ error }));
+    }
 
     if (prevState.images.length < this.state.images.length) {
       window.scrollTo({
@@ -58,27 +50,29 @@ class App extends Component {
   }
 
   handleFormSubmit = query => {
-    console.log(query);
-    this.setState({
-      images: [],
-      error: null,
-      currentPage: 1,
-      query: query,
-      isLoading: true,
-    });
+    if (!((query === this.state.query) && (this.state.currentPage === 1))) {
+      this.setState({
+        images: [],
+        error: null,
+        currentPage: 1,
+        query: query,
+        isLoading: true,
+      })
+    };
   }
 
   handleButtonClick = () => {
-    this.setState({ 
+    this.setState({
       currentPage: this.state.currentPage + 1,
-      isLoading: true 
+      isLoading: true
     })
   }
 
   render() {
-    const { images, isLoading } = this.state;
+    const { images, isLoading, error } = this.state;
     return (
       <Container>
+        {error && <h2>Opps! Something went wrong!</h2>}
         <Searchbar onSubmit={this.handleFormSubmit} />
 
         {images.length > 0 && (
@@ -88,7 +82,7 @@ class App extends Component {
             isLoading={isLoading}
           />)}
 
-        <ToastContainer position="top-center" autoClose={5000} />
+        <ToastContainer position="top-center" autoClose={4000} />
       </Container>
     )
   }
