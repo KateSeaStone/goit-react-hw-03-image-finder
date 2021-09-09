@@ -13,10 +13,10 @@ class Loader extends React.Component {
           color="#00BFFF"
           height={100}
           width={100}
-          timeout={3000}/>
+          timeout={4000} />
 
-      </div> 
-      )
+      </div>
+    )
   }
 }
 
